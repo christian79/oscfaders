@@ -4,13 +4,14 @@ LiquidCrystal595 lcd(7,8,9);     // datapin, latchpin, clockpin
 int X;
 int Y;
 
+long previousMillis = 0;
+long interval = 300;
 byte ledPin1 = 10;
 byte ledPin2 = 11;
 
 void setup()
 {
   Serial.begin(115200);
-  Serial1.begin(115200);
   pinMode(ledPin1, OUTPUT);
   pinMode(ledPin2, OUTPUT);
   digitalWrite(ledPin1, LOW);
@@ -35,19 +36,28 @@ void loop()
       lcd.print("x: ");
       lcd.print(X);
       analogWrite(ledPin1, X);
-      Serial1.print("X: ");
-      Serial1.println(X);
     }
     if (syncChar == 'Y')
     {
-      lcd.setCursor(0,1);
+      Y = Serial.parseInt();
+      lcd.setCursor(0,0);
       lcd.print("y: ");
       lcd.print(Y);
       analogWrite(ledPin2, Y);
-      Serial1.print("Y: ");
-      Serial1.println(Y);
     }
-    Serial.read();
-    lcd.clear();
+    Serial.read(); //Flush the buffer
   }
+  LCDrefresh(); //clears display
 }
+
+void  LCDrefresh()
+{
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis > interval)
+    {
+      previousMillis = currentMillis;
+      lcd.clear();
+    }
+}
+
+
