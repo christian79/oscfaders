@@ -4,7 +4,7 @@ import serial
 
 server = OSCServer( ("192.168.1.105", 8000) )
 client = OSCClient()
-client.connect( ("192.168.1.103", 9000) )
+client.connect( ("192.168.1.107", 9000) )
 arduino = serial.Serial('/dev/cu.usbmodem621', 115200)
 
 #waits for slider change
@@ -21,11 +21,12 @@ def fader_callback(path, tags, args, source):
         msg = OSCMessage("/1/label1")
         msg.insert(0, fader1Feedback)
         print "Fader 1 %i" % fader1Feedback
+        client.send(msg)
         arduino.write('X')
         arduino.write('\n')
-        arduino.write(fader1Feedback)
+        arduino.write('%i' % fader1Feedback)
         arduino.write('\n')
-        client.send(msg)
+        
 
         
 def fader2_callback(path, tags, args, source):
@@ -35,11 +36,11 @@ def fader2_callback(path, tags, args, source):
         msg = OSCMessage("/1/label2")
         msg.insert(0, fader2Feedback)
         print "Fader 2 %i" % fader2Feedback
+        client.send(msg)
         arduino.write('Y')
         arduino.write('\n')
-        arduino.write(fader2Feedback)
+        arduino.write('%i' % fader2Feedback)
         arduino.write('\n')
-        client.send(msg)
 
 #execute
 
